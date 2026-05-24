@@ -1,0 +1,15 @@
+Cobbe, K., Kosaraju, V., Bavarian, M., et al. (2021). Training Verifiers to Solve Math Word Problems**. *arXiv preprint* **arXiv:2110.14168.  
+Garg, D., Chakraborty, S., Cundy, C., Song, J., & Ermon, S. (2021). IQ-Learn: Inverse Soft-Q Learning for Imitation. *NeurIPS 2021*.  
+He, H., Yao, W., Ma, K., et al. (2024). WebVoyager: Building an End-to-End Web Agent with Large Multimodal Models. *ACL 2024*.  
+Huang, J., Gu, S., Hou, L., et al. (2022). Large Language Models Can Self-Improve**. *arXiv preprint* **arXiv:2210.11610.  
+Koh, J. Y., Lo, R., Jang, L., et al. (2024). VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks. *ACL 2024*.  
+Lightman, H., Kosaraju, V., Burda, Y., et al. (2024). Let’s Verify Step by Step. *ICLR 2024*.  
+Mandlekar, A., Xu, D., Wong, J., et al. (2021). What Matters in Learning from Offline Human Demonstrations for Robot Manipulation. *CoRL 2021*.  
+Ouyang, L., Wu, J., Jiang, X., et al. (2022). Training Language Models to Follow Instructions with Human Feedback. *NeurIPS 2022*.  
+Shinn, N., Cassano, F., Labash, B., Gopinath, A., Narasimhan, K., & Yao, S. (2023). Reflexion: Language Agents with Verbal Reinforcement Learning. *NeurIPS 2023*.  
+Turpin, M., Michael, J., Perez, E., & Bowman, S. (2023). **Language Models Don’t Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting**. *NeurIPS 2023*.  
+Wang, X., Wei, J., Schuurmans, D., et al. (2022). Self-Consistency Improves Chain of Thought Reasoning in Language Models**. *ICLR 2023*; *arXiv preprint* **arXiv:2203.11171.  
+Wei, J., Wang, X., Schuurmans, D., et al. (2022). Chain of Thought Prompting Elicits Reasoning in Large Language Models. *NeurIPS 2022*.  
+Xie, T., Zhang, D., Chen, J., et al. (2024). OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments. *NeurIPS 2024*.  
+Zheng, B., Gou, B., Kil, J., Sun, H., & Su, Y. (2024). GPT-4V(ision) is a Generalist Web Agent, if Grounded. *ICML 2024*.  
+Zheng, L., Chiang, W.-L., Sheng, Y., et al. (2023). Judging LLM-as-a-judge with MT-Bench and Chatbot Arena.

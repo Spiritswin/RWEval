@@ -1,0 +1,50 @@
+{
+  "metric_weights": {
+    "content_coverage": 0.17,
+    "citation_quality": 0.35,
+    "relevance": 0.08,
+    "thematic_structure": 0.14,
+    "synthesis_quality": 0.10,
+    "writing_quality": 0.08,
+    "length_conciseness": 0.08
+  },
+  "citation_weights": {
+    "citation_validity": 0.25,
+    "citation_appropriateness": 0.35,
+    "citation_coverage": 0.20,
+    "citation_placement": 0.10,
+    "citation_topic_consistency": 0.10
+  },
+  "thematic_weights": {
+    "topic_coverage": 0.30,
+    "topic_purity": 0.25,
+    "topic_coherence": 0.20,
+    "topic_granularity": 0.15,
+    "topic_ordering": 0.10
+  },
+  "caps": {
+    "citation_quality": {
+      "unresolved_reference_count_any": 7.0,
+      "hallucinated_reference_count_any": 5.0,
+      "hallucinated_reference_count_many": 3.0
+    },
+    "overall": {
+      "topic_mismatch": 5.0
+    }
+  },
+  "thresholds": {
+    "many_hallucinated_references": 3,
+    "topic_mismatch_topic_coverage": 3.0,
+    "topic_mismatch_content_coverage": 4.0,
+    "length_ratio_no_penalty_min": 0.75,
+    "length_ratio_no_penalty_max": 1.35,
+    "length_ratio_light_min": 0.50,
+    "length_ratio_light_max": 1.75,
+    "length_ratio_moderate_min": 0.30,
+    "length_ratio_moderate_max": 2.50,
+    "redundancy_similarity_threshold": 0.82
+  },
+  "semantic_scholar": {
+    "fields": "paperId,title,authors,year,venue,publicationDate,abstract,externalIds,citationCount,referenceCount,fieldsOfStudy,s2FieldsOfStudy,url"
+  }
+}

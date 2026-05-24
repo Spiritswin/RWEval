@@ -1,0 +1,327 @@
+\begin{abstract}
+
+\looseness=-1
+Verifiers---functions assigning rewards to agent behavior---have been key to AI progress in domains such as math, code, and games.
+However, extending these gains to domains without clear-cut success criteria (e.g., computer use) remains a challenge: while humans can recognize desired outcomes, translating this intuition into scalable rules is nontrivial.
+Multimodal Large Language Models (MLLMs) offer a promising solution, given their vast world knowledge, human-preference alignment, and reasoning capabilities.
+We evaluate MLLMs as verifiers across web navigation, computer use, and robotics, spanning 13+ model families, 28+ design templates, distinct downstream applications, and thousands of trajectories of varying lengths from diverse agents.
+We identify a critical limitation: a strong tendency for MLLMs to over-validate agent behavior---a phenomenon we term agreement bias.
+This bias is pervasive across models, is resilient to test-time scaling, and can harm applications relying on MLLM judgments/rewards (e.g., self-improvement, steering, online supervision).
+We discuss several considerations for evaluating and designing MLLM verifiers and introduce SGV---a lightweight, zero-shot method that harnesses MLLMs' own sampling mechanisms by modulating (un)conditional generation to better leverage their knowledge, alignment, and reasoning.
+In SGV, the MLLM is first elicited to generate broad priors about desired behavior, conditioned on partial information about the data under evaluation.
+Then, conditioned on self-generated priors, it reasons over and evaluates a candidate trajectory.
+Our methods yield more human-aligned verifiers, improving failure detection by 25~pp and accuracy by 14~pp, with benefits extending to downstream applications.
+In self-improvement and online supervision, they boost task completion of a GUI specialist in OSWorld, a diffusion policy in robomimic, and a ReAct agent in VisualWebArena---surpassing the previous state of the art by 20~pp.
+As a byproduct, we release an updated version of VisualWebArena featuring strong agent baselines, more human-aligned oracles, environment parallelism with high fidelity and proper resets, runtime speedups exceeding 10×, and VisualWebArena-Lite, a 1/3-scale subset with comparable evaluation fidelity.
+Our code, models, and data are publicly available at \href{https://mshalimay.github.io/agreement-bias-sgv/}{our project page}.
+
+\end{abstract}
+
+
+\section{Introduction}
+\looseness-1
+Several breakthroughs in artificial intelligence can be viewed through the lens of search guided by verifiers---functions assigning rewards to agent behavior aligned with desired criteria.
+Notable examples include seminal work in Go~ and Chess~, where search and learning are guided by 0/1 rewards tied to the game's final outcome, and recent advancements in large reasoning models (LRMs), leveraging formal verifiers in code and math~.
+
+However, while domains such as math, code, and games benefit from relatively well-defined criteria to evaluate agent behavior, this clarity diminishes in open-ended settings.
+Evaluation in such scenarios often requires nuanced criteria and reasoning over possibly long sequences of multimodal inputs.
+For example, consider evaluating the trajectory in~\cref{fig:main_figure} (top) produced by a digital agent asked to ``add the least expensive opaque phone case to a shopping cart''.
+Should the agent sort products by price?
+Perform an advanced search?
+What is ``opaque enough''?
+Although humans can often recognize satisfactory outcomes, formalizing this intuition into precise and scalable rules remains a challenge.
+
+Multimodal Large Language Models (MLLMs) emerge as a promising solution to bridge this gap.
+With vast world knowledge, human-preference alignment, and large context windows, MLLMs hold the potential to serve as general-purpose verifiers, capable of handling inputs and producing rewards in multiple modalities.
+In this work, we probe this potential through a comprehensive study of MLLM-as-verifiers on open-ended tasks, spanning diverse environments, agent architectures, state-of-the-art MLLMs and LRMs, test-time scaling techniques, verifier designs, and evaluation metrics.
+We consider web, desktop, and robotic environments---VisualWebArena~, OSWorld~, and robomimic~---covering roughly 1,300 tasks across varied domains, where verification demands nuanced criteria and multimodal reasoning.
+
+We identify a systematic and critical limitation: a strong tendency for MLLMs to over-validate agent behavior, a phenomenon we call \textit{agreement bias}.
+As shown in \cref{fig:main_figure} (middle), an MLLM verifier validates flawed behavior and even generates chains-of-thought (CoT) to rationalize incorrect judgments.
+This bias limits MLLMs' ability to fulfill a core function of a verifier---identifying flawed behavior and providing feedback to improve performance---posing risks to methods that rely on MLLM-based evaluations.
+In particular, it can limit MLLMs' effectiveness as data curators for fine-tuning and self-improvement pipelines~; as providers of rewards for training, search, and agent steering~; and as judges~ and monitors~ of agent behavior, where failure detection is essential for balanced assessments and to prevent harmful outcomes.
+
+Notably, such failures occur despite MLLMs exhibiting human-aligned priors about desired behavior, suggesting a bottleneck in knowledge extraction---potentially rooted in fundamental limitations in pretraining~ and RLHF~---that remains unresolved by major test-time scaling techniques and training for reasoning.
+To address this, we propose Self-Grounded Verification (SGV), a simple yet effective method that harnesses MLLMs' own sampling mechanisms by modulating (un)conditional generation to better leverage their knowledge, alignment, and reasoning (\cref{fig:main_figure}, bottom).
+In SGV, the MLLM is first elicited to produce broad priors about desired behavior, conditioned on partial information about the trajectory under evaluation.
+Then, conditioned on self-generated priors, the model reasons over and evaluates a candidate trajectory.
+
+\looseness=-1
+To assess the benefits and limitations of MLLM-based verifiers, as well as the effectiveness of SGV, we evaluate performance across three representative settings: offline evaluation of agent performance and two downstream applications---online supervision and self-improvement via Reflexion.
+Our findings and contributions can be summarized as follows:
+
+\looseness=-1
+\begin{itemize}[leftmargin=*, itemsep=0pt, topsep=1pt, parsep=3pt, partopsep=0pt]
+ \item Agreement bias is pervasive across MLLMs and LRMs, manifesting as output distributions skewed toward favorable labels and failure-detection rates as low as 50\%. This bias persists across 28+ scoring templates, including techniques to mitigate biases in LLM judges. The bias holds for trajectories from both weak and strong agents built on models distinct from the verifier, grows with the capability gap between agent and verifier, and is exacerbated when verification is cast as binary success-or-failure classification. This imbalance in output distribution is resilient to test-time scaling and impairs the effectiveness of model calibration and mode-seeking techniques such as majority voting.
+
+ \item We clarify how several applications rely on rewards produced by MLLM-based verifiers, and are therefore sensitive to their quality. We show that agreement bias can impair agent performance benchmarking, behavior cloning, self-improvement, and online supervision.
+
+ \item Notably, these findings apply to a verifier with strong aggregate metrics (e.g., over 90\% recall) that sets a state of the art on concurrent reward benchmarks. We discuss key factors for evaluating verifiers, including the importance of fine-grained and downstream metrics, challenges due to leniency-strictness trade-offs, and confounders that can inflate numbers (e.g., simulator bugs, agent strength).
+
+ \item We discuss several design choices for building and evaluating MLLM-based verifiers, including the impact of Likert and score-based scales, trajectory length, agent strength, tools, model calibration, techniques to mitigate biases in LLM judges, and periodic vs. outcome-based verification.
+
+ \item Our methods yield gains of up to 25~pp in failure identification, 14~pp in accuracy, and more human-aligned evaluations across models and environments, with benefits to downstream applications.
+
+ \item In self-improvement, a stronger SGV-based verifier promotes gains of up to 10~pp (24\% relative) on VisualWebArena. In online supervision, it encourages agents to backtrack and avoid greedy strategies, yielding gains of 9~pp (20\%) for a ReAct agent on VisualWebArena, 5~pp (22\%) for the GUI-Specialist UI-TARS on OSWorld, and 8~pp (33\%) for a diffusion policy on robomimic's tool-hang task. Our agents set a \textbf{new state-of-the-art on VisualWebArena}, outperforming the previous best by 20 pp while incurring lower token overhead and only utilizing native web actions.
+
+
+ \item As a byproduct, we release an updated version of VisualWebArena featuring strong agent baselines, more human-aligned evaluators, high-fidelity environment parallelism, runtime speedups exceeding 10×, and VisualWebArena-Lite—a 1/3-scale subset with comparable evaluation fidelity.
+\end{itemize}
+
+
+\section{Problem Setup} \label{sec:method}
+\subsection{Preliminaries and Definitions}\label{sec:setup1}
+\looseness-1
+\textbf{Agents and Multimodal Verifiers.}
+Our goal is to study functions that approximate human judgment of agent behavior in interactive environments.
+Specifically, an agent is tasked to complete a task $q \in \mathcal{Q}$ through a series of actions $a_t$.
+Given a history of environment states $s_{p:t} \equiv [s_p, ..., s_t]$, the agent executes an action sampled from a policy $\pi$: $a_t = \pi(s_{p:t}, q)$, leading to a new state $s_{t+1}$.
+The repetition of this process yields a \textbf{trajectory} $\tau_{p:t} \equiv (s_p, a_p, \dots, s_t, a_t)$ that, along with the task $q$, serves as the basis for evaluating agent performance.
+To evaluate trajectory-task pairs $(q, \tau_{p:t})$, humans process and produce information in multiple modalities, motivating our definition of a verifier and the scope of tasks considered.
+We define a \textbf{multimodal verifier} as a function $r: \mathcal{T} \times \mathcal{Q} \to \mathbb{R} \times \left(\mathcal{V} \cup \{\emptyset\} \right), r \in \mathcal{R}$, that maps trajectory-task pairs to rewards consisting of a real-valued score and optional outputs in other modalities from $\mathcal{V}$.
+These multimodal aspects are reflected in our settings. A task $q$ can be represented as images, text, or both, states $s_t$ as screenshots or DOM trees, actions $a_t$ as text (e.g. <type opaque phone>) or images from URLs, and verifier outputs as 0/1 scalars or natural language.
+
+\looseness-1
+\textbf{Oracle Verifiers.}
+In the benchmarks we study, instantiations of $r$ are obtained via human-written scripts that have privileged access to task and environment states, which we refer to as \textbf{oracle} verifiers.
+They produce $0/1$ rewards reflecting task completion, which we treat as aligned with human judgments.
+These functions, however, are not perfect, and we discuss limitations in~\cref{sec:setup2,sec:offline-results}.
+
+\looseness-1
+
+\textbf{Applications of Verifiers.}
+To characterize the potential benefits and risks of MLLM verifiers, we unify the view of several applications by how they use $r$ and are therefore affected by its quality, categorizing them into \textit{offline} and \textit{online}.
+The \textit{offline} setting covers cases where $r$ is applied to trajectories post hoc.
+A canonical example is agent performance evaluation, where $r$ maps trajectories to scores reflecting task completion.
+Composite applications include methods that use $r$ to improve the agent's subsequent performance, such as filtering successful trajectories for finetuning~, as well as Reflexion-style refinement pipelines, where $r$ filters trajectories to induce prompts---e.g., memories, reflections~, and tools~---that are included in the agent's context in subsequent executions.
+The \textit{online} setting covers cases where $r$ influences policy distribution \textit{during} execution.
+Applications include online supervision, where $r$ maps trajectories to scalars or text rewards to steer agents toward task completion and possibly update policy parameters~, as well as using $r$ to rank state-action samples to guide (tree) search~.
+
+\subsection{MLLM Verifiers, Agreement Bias, and Self-Grounded Verification} \label{sec:setup2}
+Human and scripted evaluation for open-ended tasks is hard to scale, motivating the use of MLLMs as an alternative.
+The usual approach to obtain $r$ with an MLLM is to prompt it with the task $q$, trajectory $\tau_{p:t}$, and context $C$ that can include evaluation rubrics and instructions for reasoning steps:
+{\small
+\[
+r_{MLLM}(q, \tau_{p:t}, C) = h\bigl(\textstyle\prod_{i=1}^{n} P(y_i \mid y_{<i}, q,\tau_{p:t},C)\bigr)
+\]
+}
+where $y = y_1, \dots, y_n$ are MLLM outputs, and $h$ is a function mapping them to rewards---e.g., a regex that maps model completions to 0/1 scores or natural language feedback.
+
+However, this approach is subject to a failure mode we term \textbf{agreement bias} (\cref{fig:trajectory_bias,fig:permissive-oracle-bias-extreme,fig:trajectory_bias2}): a tendency to over-validate agent behavior, judging flawed trajectories as aligned with the task $q$ despite the use of carefully crafted instructions $C$, established test-time scaling techniques, and decoding algorithms.
+This bias degrades the quality of MLLM-based rewards, $r_{MLLM}$, and can negatively impact several applications that rely directly or indirectly on them (\cref{sec:setup1}).
+
+Notably, this bias occurs despite MLLMs exhibiting strong, human-aligned priors on desired behavior---e.g., first-step generations in \cref{fig:main_figure,fig:trajectory_bias}---that are not properly leveraged during verification, even utilizing techniques to elicit intermediate reasoning steps.
+These observations align with documented limitations of pretraining~ and RLHF~, in which knowledge extraction can be hindered by the way information is presented, and models may conflate truthfulness with human rater satisfaction.
+However, addressing these issues by modifying pretraining corpora, training recipes, or retraining large models remains both unclear and costly, highlighting the need for alternative solutions.
+
+\looseness-1
+Motivated by this, we propose \textbf{Self-Grounded Verification (SGV)} (\cref{fig:main_figure} (middle)), a simple yet effective method that substantially improves MLLM-based verification.
+First, the MLLM is elicited to extract broad priors $\hat{k}$ about desired behavior for task $q$, conditioned on partial information:
+{\small
+\[
+\hat{k}_{q, u:v}
+= g\bigl(\textstyle\prod_{i=1}^{n} P(y_i \mid y_{<i}, \tau_{u:v}, C, q)\bigr)
+\]
+}
+where $\tau_{u:v}$ is partial trajectory data needed to frame the verification (e.g., an initial screenshot) and $g$ is a function to select a completion.
+In the second step, the MLLM evaluates the trajectory conditioned on its own priors:
+{\small
+\[
+r_{\text{SGV}}(\tau_t, C, q)
+= h\bigl(\textstyle\prod_{i=1}^{n} P(y_i \mid y_{<i}, q, \tau_{p:t}, C, \boldsymbol{\hat{k}}_q)\bigr)
+\]
+}
+
+\looseness-1
+Intuitively, by modulating (un)conditional generation, SGV harnesses MLLMs' own sampling mechanisms to enable more effective use of their knowledge, alignment, and reasoning capabilities.
+Conditioning on less information in the first step encourages the model to explore its probability distribution more freely, extracting knowledge pertinent to the task at hand and independent of the data under evaluation.
+In the second step, the MLLM evaluates a candidate trajectory by sampling from a conditional distribution induced by its own priors.
+We hypothesize that MLLMs, given their extensive world knowledge and human-preference alignment, can produce effective priors that serve as impartial references for verification, yielding more balanced output distributions and better-calibrated judgments.
+
+In this paper, we obtain $\hat{k}_q$ from initial screenshots and task $q$. More generally, SGV can be applied multiple times, either to intermediate partial trajectories as the task progresses or by decomposing task $q$ into subtasks; we leave this exploration to future work.
+
+\subsection{Evaluating MLLM Verifiers}\label{sec:setup3}
+This section outlines several factors considered for a reliable assessment of MLLM verifiers and for empirically demonstrating agreement bias and validating our hypotheses.
+
+\textbf{Environment Diversity and Multimodality.}
+We consider benchmarks that require nuanced verification, multimodal reasoning, and collectively span a diverse range of tasks.
+VisualWebArena (VWA)~ emulates a web browser and spans 910 tasks, many of which combine text and image instructions (e.g., \textit{``Buy this product'' + <image>}).
+OSWorld~ emulates a computer and comprises 369 tasks involving widely used desktop applications across both single- and multi-application workflows.
+Finally, robomimic~ provides long-horizon robot manipulation tasks, and we focus on \textit{tool hang}, the most challenging among them, which consists of two subtasks: (1) inserting an L-shaped pencil into a base and (2) hanging a wrench on it.
+\cref{app:figs-task-examples} provides illustrations of representative tasks and trajectories.
+
+\textbf{Trajectory Annotations.}
+Similar to prior work~, we use benchmark--provided oracle verifiers as proxies for human judgment due to the high cost of large-scale annotation.
+However, we observed several issues with the oracles in VWA, an issue also noted in concurrent work~ comparing rule-based evaluation with human annotations.
+To establish a reliable reference, we corrected non-ambiguous issues in the VWA oracles---e.g., string parsing bugs, mismatches between task intents and oracle requirements, and incorrect annotations.
+To validate the effectiveness and impartiality of these changes, we evaluated the revised oracles on external labeled trajectories from~, observing near-perfect agreement with human judgments (\cref{tab:fixed_oracle}).
+For details about these and other refinements to (Visual)WebArena, see~\cref{app:vwa_details}.
+
+\looseness-1
+\textbf{Agents and Trajectory Quality.}
+Weak agents and buggy environments lead to trajectories that are trivial to verify and can artificially inflate verifier performance.
+For instance, some trajectories in~ exhibit long action loops, as well as ``page not found'' errors due to bugs in the browsergym~ suite.
+Moreover, incorporating trajectories generated by diverse methods is crucial to ensure the generalization of our findings.
+Therefore, we fixed several bugs in the (Visual)WebArena environments and considered agents built from different methods.
+To generate trajectories in VWA, we build a strong ReAct agent~ that yields a balanced ratio of successes and failures.
+For OSWorld, we employ the GUI-Specialist UI-TARS-1.5~, the best-performing agent on the benchmark at the time of this work.
+For robomimic, we train a diffusion policy on the expert demonstrations collected by~.
+
+\textbf{Choice of Verifier Applications.}
+MLLMs have been used to approximate $r$ in several of the applications discussed in \cref{sec:setup1}.
+While exploring this whole range is infeasible, we focus on three representative cases that can inform general applicability: offline evaluation of agent trajectories, self-refinement via Reflexion, and online supervision.
+These applications: (1) introduce fewer confounding factors; (2) are of direct practical interest and often serve as building blocks in larger pipelines; and (3) yield informative signals for broader applicability. For instance, if $r_{\text{MLLM}}$ produces many false positives in trajectory evaluation, finetuning on those trajectories is likely to be affected. Similarly, if $r_{\text{MLLM}}$ yields weak rewards for online supervision or Reflexion, it is likely to be suboptimal for online training and more complex Reflexion-style self-refinement pipelines.
+
+\textbf{Baselines and Ablations.}
+To probe limitations of MLLM verifiers and set strong baselines, we build verifiers with several methods, including chain-of-thought (CoT)~ and set-of-marks (SoM) prompting~, majority voting~, and reasoning models.
+For VWA, we also consider the approach from~, where we additionally provide benchmark-specific rubrics for evaluation.
+MLLMs are given full trajectories represented as sequences of screenshot-action pairs and asked to assign a ternary Likert label: \texttt{SUCCESS}, \texttt{PARTIAL SUCCESS}, or \texttt{FAILURE}, mapped to \texttt{[1, 0, 0]} to align with oracle scores.
+For reference,~\cref{tab:agrb_models} shows that our \textbf{baseline MLLM verifier} is already strong, achieving \textbf{state-of-the-art performance on AgentRewardBench}. \textbf{SGV further improves} upon that, surpassing even the original VisualWebArena oracles.
+\cref{app:ablations} ablates on all such choices, including model family and size, prompt/scoring templates, and SGV design and prior generation mechanism.
+
+\textbf{Quantitative Metrics.}
+Verifiers should negatively (positively) evaluate trajectories marked as failures (successes) by humans or proxies to them.
+Evaluations consistently biased toward either side are likely undesirable.
+To capture the degree of alignment in MLLM responses, we evaluate (1) bias, (2) distance skewness, and (3) true positive and true negative rates:
+{\footnotesize
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
+\[
+\text{bias} = \tfrac{1}{n}\textstyle\sum_{i}\mathbb{E}[d_i],
+\;
+\text{dSkew} = 1 - \frac{\sum_{ij}\lVert d_i-d_j\rVert}{\sum_{ij}\lVert d_i+d_j\rVert},
+\;
+\text{T?R}(c) = \frac{\sum_{i}\mathbf{1}(\hat r_i=c \wedge r_i^*=c)}{\sum_{i}\mathbf{1}(r_i^*=c)}
+\approx \hat P(\hat r_i=c\mid r_i^*=c),\; c\in\{0,1\}
+\]
+\noindent where $\hat r_i$ is the MLLM verifier reward, $r_i^*$ is the human or oracle reward, and $d_i = \hat r_i - r_i^*$.
+}
+
+Ultimately, a verifier should also be evaluated by its downstream impact: if its feedback is effective, agent performance should improve.
+Therefore, \textbf{for downstream applications}, we use \textbf{task completion rates (SR)} of base agents with and without verifier interventions as the primary metric.
+
+The following highlights key aspects regarding quantitative analysis of verifiers: \textbf{(1)} $bias$ and $dSkew$, also adopted by~, are summary statistics of the distribution of MLLM responses.
+Positive values indicate rewards systematically higher than those given by humans, whereas values near zero indicate closer alignment.
+\textbf{(2)} TNR measures how often MLLMs identify failures among trajectories marked as failures by humans, and is therefore an empirical estimate of the probability of classifying a trajectory as flawed when it truly is.
+Moreover, we use low TNR and high false-positive rate interchangeably, since {\footnotesize$TNR = 1 - False Positive Rate$} (analogous for TPR).
+\textbf{(3)} While we report multiple metrics for robustness, we emphasize the practical importance of statistics such as TPR and TNR, which directly relate to the core function of verifiers: identifying flawed behavior and providing feedback to improve agent performance.
+Low values indicate not only misalignment but also risks to downstream applications. \textbf{(4)} Accuracy (ACC) is included as an \textit{auxiliary} metric for interpretation and comparison, as it provides a summary of TPR-TNR trade-offs: {\footnotesize$ACC = (1 - \text{SR}) \cdot TNR + \text{SR} \cdot TPR$}.
+
+
+\section{Offline Evaluation of Agent Trajectories}\label{sec:offline-results}
+In this section we evaluate MLLM verification performance for about 1,300 trajectories generated in VisualWebArena (VWA) and OSWorld.
+Trajectories are based on \texttt{Gemini-2.5-Flash} in VWA and \texttt{UI-Tars-1.5} in OSWorld, with success rates of 47\% and 22\%, respectively.
+\cref{tab:abias-sgv,tab:tts-ablation} report performance across a range of models and test-time scaling techniques.
+\cref{app:exper_details,app:breakdowns-offline,app:ablations} provide breakdowns by environment and trajectory length, as well as other ablations.
+
+
+\looseness-1
+\textbf{Agreement Bias.} MLLMs display a strong tendency to over-validate agent behavior.
+This manifests as a high number of false positives (1-TNR), responses tilted toward favorable evaluations (strictly positive bias and skewness), and a low probability of flagging failures (TNR as low as 50\%).
+As shown in \cref{tab:tts-ablation}, this pattern persists despite techniques such as CoT and SoM (rows 3 and 4), majority voting (row 5), and the inclusion of task-specific evaluation criteria (row 6).
+\cref{fig:trajectory_bias,fig:permissive-oracle-bias-extreme,fig:permissive-oracle-bias} illustrate a reason behind this pattern: MLLMs generate reasoning that rationalizes flawed trajectories and their wrong judgments.
+Sampling fails to mitigate this issue and may even exacerbate it, as higher temperatures can increase the likelihood of hallucinations and spurious correlations.
+
+
+\looseness-1
+\cref{tab:resp-dist} further contextualizes results through the distribution of MLLM responses.
+The top panel shows distributions averaged across 28+ evaluation templates that incorporate commonly used bias-mitigation strategies, such as criteria-order randomization and label rephrasing (see \cref{app:ablation_templates_distribution} for details and all histograms).
+The bottom panel reports oracle--MLLM agreement rates over 10,000+ samples stratified by success and failure subsets, measuring the probability of sampling a correct verification from the MLLM output distribution.
+\cref{tab:resp-dist} (top) reveals that \textbf{(i)} MLLMs tend to concentrate responses in high score regions; \textbf{(ii)} binary scales (e.g., success/failure as adopted in~ and subsequent work) tend to amplify this bias (e.g., 72\% SR vs. 57\% expected); and \textbf{(iii)} increasing label granularity (as in our ternary Likert-scale) can partially mitigate this issue.
+\cref{tab:resp-dist} (bottom) shows that over-validation is reflected in the model's output distribution: on failure subsets, the probability of sampling a correct response from the MLLM is at or below chance (e.g., 48\% in VWA).
+This imbalance explains the ineffectiveness of methods like majority voting (that rely on the mode of the distribution), model calibration (\cref{app:platt_1}), and opens opportunities for test- and training-time methods that account for it during sampling (see \cref{app:platt_2} for a proof of concept).
+
+\textbf{Cross-Model Variations and Verification Difficulty.}
+Agreement bias arises even when verifiers and agents are built from different model families, sizes, and methods---in~\cref{tab:abias-sgv}, models such as GPT-4.1, and Qwen3 belong to distinct families and are stronger than the models used to build the agents.
+Likewise, it occurs for trajectories produced by weak and strong agents, as evidenced by the suboptimal performance in both OSWorld (22\% SR) and VWA (47\% SR)(\cref{tab:tts-ablation,tab:offline-osw,tab:offline-vwa}) and weaker agents in VWA (\cref{tab:weak-vs-strong}).
+It is, however, more severe when models are weaker (e.g., GPT-4.1-mini) and for trajectories generated by stronger agents.
+This suggests that closing the gap between agent and verifier capabilities can alleviate (though not eliminate) the issue, whereas strategies such as building verifiers with (ensembles of) models that differ from the agents are insufficient.
+
+\looseness-1
+\textbf{Adverse Impacts.}
+The bias toward over-validation means that MLLM verifiers fail precisely when most needed---when agent behavior is flawed and requires correction---with consequences extending beyond imprecise evaluation of agent performance.
+For example, for the task \textit{“Buy the cheapest <product> from <category> with <attribute>”}, a trajectory as in~\cref{fig:trajectory_bias} where the agent searches for \textit{``<product>''}, clicks the first result, and adds it to the cart, is deemed successful despite omitting steps such as filtering, sorting, and completing the checkout. \Cref{fig:permissive-oracle-bias-extreme} illustrates an even more extreme case: the agent produces an answer unsupported by any trajectory information, yet an MLLM verifier validates it---even though, by construction, no information exists to justify such a judgment.
+
+\looseness-1
+\textbf{Relation to Other Biases.} Agreement bias has distinct characteristics from other biases identified in LLM literature, such as ``self-bias''~---where models favor their own text generations and for which external knowledge injection is a typical remedy---and biases attributable to positional or phrasing dependencies in evaluation templates~.
+In our settings, agreement bias arises despite the verifier's inputs omitting text directly produced by agents, and including \textit{multimodal} inputs augmented with \textit{external} information derived from truthful environment data, such as screenshots augmented with Set-of-Marks, and low-level action representations enriched with DOM data.
+Likewise, it persists when agents and verifiers are built from different methods and models and despite interventions such as label shuffling and rephrasing, as well as access to grounding tools (\cref{tab:resp-dist,app:ablation_templates_distribution,app:websearch_noise_ablation}).
+
+\textbf{Effectiveness of SGV.} SGV improves verification across all metrics, models, and benchmarks, increasing TNR by up to 25 percentage points (pp), overall accuracy by up to 14pp, and promoting responses more aligned with human preferences.
+This is reflected in reduced bias and skewness, and in more balanced response distributions across 28+ evaluation templates (see \cref{tab:resp-dist}(top)), as well as in the models' output distribution (\cref{tab:resp-dist}(bottom)).
+These gains hold even in settings where the verifier is weaker than the generator (e.g., Gemini 2.0 and GPT-4.1-Mini; see also \cref{app:crossmodal_ablation}).
+Moreover, SGV outperforms instructions with task-specific evaluation criteria (\cref{tab:tts-ablation}, row 5), indicating it enables models to generate completions to condition themselves that can surpass human-written rubrics, offering a more scalable alternative.
+Finally, additional results in~\cref{app:websearch_noise_ablation} show that SGV outperforms grounding via web-search tools and is robust to moderate noise in priors generated in the first step; that weaker models can produce effective priors for stronger models and models of different families; and that multiple and diverse priors in the first step can further improve performance.
+
+\looseness-1
+Remarkably, SGV (i) enables non-reasoning models to match the performance of reasoning counterparts, and (ii) boosts the accuracy of reasoning models by up to 11pp---a perhaps surprising result, given that LRMs are explicitly trained to produce intermediate traces, and interventions can degrade performance~.
+These results align with intuitions about limitations stemming from earlier phases of LLM training, raising questions about the potential benefits of augmenting reasoning-oriented training with an SGV step, pretraining data rewriting~, or methods that account for imbalances in MLLMs' output distributions.
+
+\looseness-1
+\textbf{Fine-Grained Metrics.}
+These results highlight the importance of reporting fine-grained metrics in works proposing MLLMs in evaluative roles and artifacts produced by them.
+Given the trade-offs inherent to verification, it is crucial to report statistics capturing \textit{both} the probability of identifying correct behavior and especially, flawed behavior.
+Reporting only single or aggregate metrics can be misleading.
+As shown in~\cref{tab:abias-sgv,tab:tts-ablation}, verifiers can display about 97\% recall and 70\% accuracy, yet misclassify \textasciitilde 50\% of failed trajectories as successes, which can severely harm downstream applications.
+
+\textbf{Leniency-Strictness Trade-offs in Verification.}
+For some models, SGV can lead to a lower TPR.
+This pattern stems from two main causes: disagreements with lenient oracles on simplistic tasks and stricter verification.
+Specifically, evaluation in these digital benchmarks is based on hard-coded rules applied to a subset of states.
+This means that trajectories such as in~\cref{fig:permissive-oracle-bias} where an agent ``Buy the cheapest <product>,'' by searching for ``<product>,'' and purchasing the first result are deemed successful by oracle scripts.
+Influenced by agreement bias, MLLMs tend to validate such trajectories, but when SGV is applied, this behavior is rejected for lacking steps that confirm that the item is the cheapest, thereby reducing TPR.
+On the flip side,~\cref{fig:online-same} illustrates a case where SGV only validates an otherwise correct trajectory after the agent performs extra steps to double-check item attributes.
+
+These examples highlight the challenges of open-ended verification, as well as the potential and limits of MLLMs as alternatives.
+For humans, it is readily apparent that behaviors such as in~\cref{fig:permissive-oracle-bias} do not generalize.
+Yet, translating this intuition into precise rules is far from trivial: stricter criteria can reject valid solutions, whereas permissive ones may encourage brittle behavior.
+MLLMs, like humans, offer flexibility in interpretation, but this comes at the cost of formal guarantees and vulnerabilities---with agreement bias being a strong one.
+In the next section, we analyze the impact of these trade-offs on downstream applications and show that SGV interventions are typically non-disruptive (\cref{fig:online-same}), ultimately improving task completion through more generalizable behavior.
+
+
+\section{Downstream Applications} \label{sec:downstream-results}
+In this section, we evaluate MLLM verifiers on downstream applications, focusing on their ability to boost agent performance in self-improvement and online supervision.
+These are applications of direct interest that, so far, have shown limited benefits and occasional performance degradation~.
+Importantly, these experiments provide an assessment of verifiers' net impact, given the trade-offs discussed in~\cref{sec:offline-results}.
+Below we discuss main results; for experimental details and qualitative analysis, see~\cref{app:online_exper_details,app:qualitative_online}.
+
+
+\textbf{Self-Improvement}.
+In this setting, after each episode: (i) a verifier evaluates the trajectory; (ii) the agent reflects on its previous attempt conditioned on the verifier's evaluation; and (iii) reflections are given to the agent in subsequent attempts to enable self-correction over time.
+As shown in~\cref{fig:reflexion}, under oracle verifier supervision, task success rate (SR) increases by up to 21~pps after three iterations, confirming the feasibility and defining an upper bound for self-refinement.
+When supervised by the (strong) baseline MLLM verifier, the base agent's performance quickly plateaus, yielding minimal improvements, whereas SGV enables consistent progress, boosting SR by up to 10.4 pps.
+This pattern demonstrates how agreement bias limits the effectiveness of MLLM verifiers.
+Referring back to~\cref{sec:offline-results}, a TNR close to 50\% implies that the verifier fails to provide a corrective signal in about half of the cases where agent behavior is flawed, hindering its ability to self-improve.
+
+\textbf{Online Supervision}.
+Similarly, agreement bias impairs the effectiveness of MLLM-derived rewards for online methods.
+\cref{tab:vwa-online-results} shows that the (strong) baseline verifier fails to meaningfully improve digital agent performance.
+In contrast, SGV boosts SR by 9 percentage points (pp) on VisualWebArena (20\% relative) and by 5 pp on OSWorld (22\% relative).
+Notably, our agent sets a new \textbf{state of the art on VisualWebArena}, surpassing the previous best by 20 pp (58\% relative) while requiring substantially fewer tokens, no access to prior trajectories, and using only native web actions.
+
+\looseness-1
+A few factors explain these results.
+First, SGV identifies suboptimal behavior and provides feedback that enables agents to backtrack and complete the task (e.g.,~\cref{fig:online-improves}).
+Without SGV, agreement bias prevents verifiers from intervening precisely when agent behavior is flawed, limiting their effectiveness (e.g.,~\cref{fig:trajectory_bias}).
+Second, while SGV can lead to stricter verification, interventions are mostly non-disruptive.
+For example, in~\cref{fig:online-same} the verifier rejects a greedy strategy that technically satisfies the benchmark, prompting the agent to search for and confirm user-requested attributes, ultimately leading to task completion through a more robust approach. \cref{fig:transition-compare} quantifies this pattern: without SGV, the verifier endorses flawed behavior in 30\% of the tasks, offering no signal for improvement.
+With SGV, 10\% of tasks improve due to accurate failure detection, and among the 7.4\% of tasks marked as false negatives, 6.6\% remain successful, whereas only 0.8\% transition to failure.
+\looseness-1
+Likewise, robomimic results (\cref{tab:robomimic}) show that the baseline MLLM verifier is able to guide the policy to partial completion (high PSR). However, influenced by agreement bias, it struggles to further guide the policy toward full completion, as evidenced by the low number of replans and SR \textit{lower} than the baseline.
+In contrast, SGV triggers replans more often, improving over the baseline by 8~pp.
+For a categorization of factors influencing success rates and the impact of verifier design choices, see~\cref{app:qualitative_online,app:outcome-vs-process}.
+
+\looseness-1
+\textbf{Discussion}. These results illustrate the risks posed by agreement bias: MLLMs' tendency to over-validate agent behavior leads to unreliable evaluations precisely when most needed—when behavior is flawed and requires correction---limiting their effectiveness for trajectory selection and online feedback.
+Notably, this holds for an MLLM verifier with \textbf{strong} numbers in judging trajectories post-hoc: over 91\% recall (higher than SGV) and state-of-the-art performance (precision) on AgentRewardBench.
+This highlights the importance of evaluating verifier performance using (i) fine-grained metrics and (ii) downstream applications, as leniency–strictness trade-offs in verification can render post-hoc metrics insufficient to characterize a verifier's practical utility.
+
+
+\section{Conclusion, Limitations, and Future Work}\label{sec:conclusion}
+\looseness=-1
+We identify agreement bias, a critical limitation that hinders MLLMs from serving as verifiers of agent behavior. We demonstrate its adverse effects on existing applications, discuss methods for evaluating and improving MLLM-based verification, and introduce SGV, a simple yet effective method that improves verification across multiple models and environments.
+Although SGV mitigates agreement bias, it does not eliminate it.
+Our qualitative analysis (\cref{app:qualitative_bias}) indicates that remaining failures often stem from limitations in base models' integration of visual perception and language.
+Future work may explore methods to enhance these capabilities, such as integrating visual experts for fine-grained perception, potentially yielding gains complementary to SGV.
+In parallel, compelling directions for open-ended verification include combining MLLMs with symbolic methods~ and training- or test-time strategies that account for skewness in MLLM output distributions associated with agreement bias (\cref{app:platt}).
+Finally, an important question concerns \emph{when} to invoke a verifier and the relative value of process and outcome-based verification, particularly in digital environments where state spaces are often discrete, and actions can be irreversible or destructive (\cref{app:outcome-vs-process}).

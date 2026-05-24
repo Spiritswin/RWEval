@@ -1,0 +1,65 @@
+Achiam, Josh, Adler, Steven, Agarwal, Sandhini, Ahmad, Lama, Akkaya, Ilge, Aleman, Florencia Leoni, Almeida, Diogo, Altenschmidt, Janko, Altman, Sam, Anadkat, Shyamal, et al. GPT-4 technical report. arXiv preprint arXiv:2303.08774, 2023.
+
+Microsoft Research AI4Science and Microsoft Azure Quantum. The impact of large language models on scientific discovery: a preliminary study using GPT-4. arXiv preprint arXiv:2311.07361, 2023.
+
+Baek, Jinheon, Jauhar, Sujay Kumar, Cucerzan, Silviu, and Hwang, Sung Ju. ResearchAgent: Iterative research idea generation over scientific literature with large language models. arXiv preprint arXiv:2404.07738, 2024.
+
+Bao, Peng, Hong, Weihui, and Li, Xuanya. Predicting paper acceptance via interpretable decision sets. In Companion Proceedings of the Web Conference 2021, pp. 461–467, 2021.
+
+Buchanan, Bruce G., and Feigenbaum, Edward A. Dendral and meta-dendral: Their applications dimension. In Readings in Artificial Intelligence, pp. 313–322. Elsevier, 1981.
+
+Collins, Ed, Augenstein, Isabelle, and Riedel, Sebastian. A supervised approach to extractive summarisation of scientific papers. arXiv preprint arXiv:1706.03946, 2017.
+
+D’Arcy, Mike, Hope, Tom, Birnbaum, Larry, and Downey, Doug. MARG: Multi-agent review generation for scientific papers. arXiv preprint arXiv:2401.04259, 2024.
+
+Hayes, Tomas, Rao, Roshan, Akin, Halil, Sofroniew, Nicholas J., Oktay, Deniz, Lin, Zeming, Verkuil, Robert, Tran, Vincent Q., Deaton, Jonathan, Wiggert, Marius, et al. Simulating 500 million years of evolution with a language model. bioRxiv, pp. 2024–07, 2024.
+
+Hosseini, Mohammad, and Horbach, Serge P. J. M. Fighting reviewer fatigue or amplifying bias? Considerations and recommendations for use of ChatGPT and other large language models in scholarly peer review. Research Integrity and Peer Review, 8(1):4, 2023.
+
+Huang, Qian, Vora, Jian, Liang, Percy, and Leskovec, Jure. MLAgentBench: Evaluating language agents on machine learning experimentation. In Forty-first International Conference on Machine Learning, 2024.
+
+Jumper, John, Evans, Richard, Pritzel, Alexander, Green, Tim, Figurnov, Michael, Ronneberger, Olaf, Tunyasuvunakool, Kathryn, Bates, Russ, Zídek, Augustin, Potapenko, Anna, et al. Highly accurate protein structure prediction with AlphaFold. Nature, 596(7873):583–589, 2021.
+
+Lambert, Nathan, Pyatkin, Valentina, Morrison, Jacob, Miranda, L. J., Lin, Bill Yuchen, Chandu, Khyathi, Dziri, Nouha, Kumar, Sachin, Zick, Tom, Choi, Yejin, et al. RewardBench: Evaluating reward models for language modeling. arXiv preprint arXiv:2403.13787, 2024.
+
+Langley, P. Scientific Discovery: Computational Explorations of the Creative Processes. MIT Press, 1987.
+
+Langley, Pat. Integrated systems for computational scientific discovery. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 38, pp. 22598–22606, 2024.
+
+LeCun, Yann, Bengio, Yoshua, and Hinton, Geoffrey. Deep learning. Nature, 521(7553):436–444, 2015.
+
+Li, Guojie. AI4R: The fifth scientific research paradigm. Bulletin of Chinese Academy of Sciences (Chinese Version), 39(1):1–9, 2024.
+
+Liang, Weixin, Zhang, Yuhui, Cao, Hancheng, Wang, Binglu, Ding, Daisy Yi, Yang, Xinyu, Vodrahalli, Kailas, He, Siyu, Smith, Daniel Scott, Yin, Yian, et al. Can large language models provide useful feedback on research papers? A large-scale empirical analysis. NEJM AI, 1(8):AIoa2400196, 2024.
+
+Liu, Ryan, and Shah, Nihar B. ReviewerGPT? An exploratory study on using large language models for paper reviewing. arXiv preprint arXiv:2306.00622, 2023.
+
+Lu, Chris, Lu, Cong, Lange, Robert Tjarko, Foerster, Jakob, Clune, Jeff, and Ha, David. The AI Scientist: Towards fully automated open-ended scientific discovery. arXiv preprint arXiv:2408.06292, 2024.
+
+Merchant, Amil, Batzner, Simon, Schoenholz, Samuel S., Aykol, Muratahan, Cheon, Gowoon, and Cubuk, Ekin Dogus. Scaling deep learning for materials discovery. Nature, 624(7990):80–85, 2023.
+
+Nuijten, Michèle B., Hartgerink, Chris H. J., Van Assen, Marcel A. L. M., Epskamp, Sacha, and Wicherts, Jelte M. The prevalence of statistical reporting errors in psychology (1985–2013). Behavior Research Methods, 48:1205–1226, 2016.
+
+Pyzer-Knapp, Edward O., Pitera, Jed W., Staar, Peter W. J., Takeda, Seiji, Laino, Teodoro, Sanders, Daniel P., Sexton, James, Smith, John R., and Curioni, Alessandro. Accelerating materials discovery using artificial intelligence, high performance computing and robotics. npj Computational Materials, 8(1):84, 2022.
+
+Reid, Machel, Savinov, Nikolay, Teplyashin, Denis, Lepikhin, Dmitry, Lillicrap, Timothy, Alayrac, Jean-Baptiste, Soricut, Radu, Lazaridou, Angeliki, Firat, Orhan, Schrittwieser, Julian, et al. Gemini 1.5: Unlocking multimodal understanding across millions of tokens of context. arXiv preprint arXiv:2403.05530, 2024.
+
+Robertson, Zachary. GPT4 is slightly helpful for peer-review assistance: A pilot study. arXiv preprint arXiv:2307.05492, 2023.
+
+Romera-Paredes, Bernardino, Barekatain, Mohammadamin, Novikov, Alexander, Balog, Matej, Kumar, M. Pawan, Dupont, Emilien, Ruiz, Francisco J. R., Ellenberg, Jordan S., Wang, Pengming, Fawzi, Omar, et al. Mathematical discoveries from program search with large language models. Nature, 625(7995):468–475, 2024.
+
+Si, Chenglei, Yang, Diyi, and Hashimoto, Tatsunori. Can LLMs generate novel research ideas? A large-scale human study with 100+ NLP researchers. arXiv preprint arXiv:2409.04109, 2024.
+
+Tyser, Keith, Segev, Ben, Longhitano, Gaston, Zhang, Xin-Yu, Meeks, Zachary, Lee, Jason, Garg, Uday, Belsten, Nicholas, Shporer, Avi, Udell, Madeleine, et al. AI-driven review systems: Evaluating LLMs in scalable and bias-aware academic reviews. arXiv preprint arXiv:2408.10365, 2024.
+
+Wang, Qingyun, Downey, Doug, Ji, Heng, and Hope, Tom. SciMON: Scientific inspiration machines optimized for novelty. arXiv preprint arXiv:2305.14259, 2023.
+
+Wang, Yidong, Guo, Qi, Yao, Wenjin, Zhang, Hongbo, Zhang, Xin, Wu, Zhen, Zhang, Meishan, Dai, Xinyu, Zhang, Min, Wen, Qingsong, et al. AutoSurvey: Large language models can automatically write surveys. arXiv preprint arXiv:2406.10252, 2024.
+
+Yakaboski, Chase, Hyde, Gregory, Nyanhongo, Clement, and Santos Jr., Eugene. AI for open science: A multi-agent perspective for ethically translating data to knowledge. arXiv preprint arXiv:2310.18852, 2023.
+
+Yang, Zonglin, Du, Xinya, Li, Junxian, Zheng, Jie, Poria, Soujanya, and Cambria, Erik. Large language models for automated open-domain scientific hypotheses discovery. arXiv preprint arXiv:2309.02726, 2023.
+
+Zhang, Jiayao, Zhang, Hongming, Deng, Zhun, and Roth, Dan. Investigating fairness disparities in peer review: A language model enhanced approach. arXiv preprint arXiv:2211.06398, 2022.
+
+Zhang, Lunjun, Hosseini, Arian, Bansal, Hritik, Kazemi, Mehran, Kumar, Aviral, and Agarwal, Rishabh. Generative verifiers: Reward modeling as next-token prediction. arXiv preprint arXiv:2408.15240, 2024.

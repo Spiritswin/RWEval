@@ -1,0 +1,292 @@
+@article{trabucco2025towards,
+  title={Towards Internet-Scale Training For Agents},
+  author={Trabucco, Brandon and Sigurdsson, Gunnar and Piramuthu, Robinson and Salakhutdinov, Ruslan},
+  journal={arXiv preprint arXiv:2502.06776},
+  year={2025}
+}
+
+@article{pan2024autonomous,
+  title={Autonomous evaluation and refinement of digital agents},
+  author={Pan, Jiayi and Zhang, Yichi and Tomlin, Nicholas and Zhou, Yifei and Levine, Sergey and Suhr, Alane},
+  journal={arXiv preprint arXiv:2404.06474},
+  year={2024}
+}
+
+@misc{ma2024visionlanguagemodelsincontext,
+      title={Vision Language Models are In-Context Value Learners}, 
+      author={Yecheng Jason Ma and Joey Hejna and Ayzaan Wahid and Chuyuan Fu and Dhruv Shah and Jacky Liang and Zhuo Xu and Sean Kirmani and Peng Xu and Danny Driess and Ted Xiao and Jonathan Tompson and Osbert Bastani and Dinesh Jayaraman and Wenhao Yu and Tingnan Zhang and Dorsa Sadigh and Fei Xia},
+      year={2024},
+      eprint={2411.04549},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2411.04549}, 
+}
+
+@misc{wang2024agentworkflowmemory,
+      title={Agent Workflow Memory}, 
+      author={Zora Zhiruo Wang and Jiayuan Mao and Daniel Fried and Graham Neubig},
+      year={2024},
+      eprint={2409.07429},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2409.07429}, 
+}
+
+@inproceedings{
+yu2025exact,
+title={Ex{ACT}: Teaching {AI} Agents to Explore with Reflective-{MCTS} and Exploratory Learning},
+author={Xiao Yu and Baolin Peng and Vineeth Vajipey and Hao Cheng and Michel Galley and Jianfeng Gao and Zhou Yu},
+booktitle={The Thirteenth International Conference on Learning Representations},
+year={2025},
+url={https://openreview.net/forum?id=GBIUbwW9D8}
+}
+
+@article{shinn2023reflexion,
+  title={Reflexion: Language agents with verbal reinforcement learning},
+  author={Shinn, Noah and Cassano, Federico and Gopinath, Ashwin and Narasimhan, Karthik and Yao, Shunyu},
+  journal={Advances in Neural Information Processing Systems},
+  volume={36},
+  pages={8634--8652},
+  year={2023}
+}
+
+@misc{sarch2025vlmagentsgeneratememories,
+      title={VLM Agents Generate Their Own Memories: Distilling Experience into Embodied Programs of Thought}, 
+      author={Gabriel Sarch and Lawrence Jang and Michael J. Tarr and William W. Cohen and Kenneth Marino and Katerina Fragkiadaki},
+      year={2025},
+      eprint={2406.14596},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2406.14596}, 
+}
+
+@article{pan2024webcanvas,
+  title={Webcanvas: Benchmarking web agents in online environments},
+  author={Pan, Yichen and Kong, Dehan and Zhou, Sida and Cui, Cheng and Leng, Yifei and Jiang, Bing and Liu, Hangyu and Shang, Yanyi and Zhou, Shuyan and Wu, Tongshuang and others},
+  journal={arXiv preprint arXiv:2406.12373},
+  year={2024}
+}
+
+@misc{koh2024treesearchlanguagemodel,
+      title={Tree Search for Language Model Agents}, 
+      author={Jing Yu Koh and Stephen McAleer and Daniel Fried and Ruslan Salakhutdinov},
+      year={2024},
+      eprint={2407.01476},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2407.01476}, 
+}
+
+@misc{yang2025agentoccamsimplestrongbaseline,
+      title={AgentOccam: A Simple Yet Strong Baseline for LLM-Based Web Agents}, 
+      author={Ke Yang and Yao Liu and Sapana Chaudhary and Rasool Fakoor and Pratik Chaudhari and George Karypis and Huzefa Rangwala},
+      year={2025},
+      eprint={2410.13825},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2410.13825}, 
+}
+
+@misc{sun2025mmverifyenhancingmultimodalreasoning,
+      title={MM-Verify: Enhancing Multimodal Reasoning with Chain-of-Thought Verification}, 
+      author={Linzhuang Sun and Hao Liang and Jingxuan Wei and Bihui Yu and Tianpeng Li and Fan Yang and Zenan Zhou and Wentao Zhang},
+      year={2025},
+      eprint={2502.13383},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2502.13383}, 
+}
+
+@article{koh2024visualwebarena,
+  title={Visualwebarena: Evaluating multimodal agents on realistic visual web tasks},
+  author={Koh, Jing Yu and Lo, Robert and Jang, Lawrence and Duvvur, Vikram and Lim, Ming Chong and Huang, Po-Yu and Neubig, Graham and Zhou, Shuyan and Salakhutdinov, Ruslan and Fried, Daniel},
+  journal={arXiv preprint arXiv:2401.13649},
+  year={2024}
+}
+
+@article{li2024effects,
+  title={On the Effects of Data Scale on Computer Control Agents},
+  author={Li, Wei and Bishop, William and Li, Alice and Rawles, Chris and Campbell-Ajala, Folawiyo and Tyamagundlu, Divya and Riva, Oriana},
+  journal={arXiv preprint arXiv:2406.03679},
+  year={2024}
+}
+
+@article{liu2023agentbench,
+  title={Agentbench: Evaluating llms as agents},
+  author={Liu, Xiao and Yu, Hao and Zhang, Hanchen and Xu, Yifan and Lei, Xuanyu and Lai, Hanyu and Gu, Yu and Ding, Hangliang and Men, Kaiwen and Yang, Kejuan and others},
+  journal={arXiv preprint arXiv:2308.03688},
+  year={2023}
+}
+
+@article{yu2024exact,
+  title={Exact: Teaching ai agents to explore with reflective-mcts and exploratory learning},
+  author={Yu, Xiao and Peng, Baolin and Vajipey, Vineeth and Cheng, Hao and Galley, Michel and Gao, Jianfeng and Yu, Zhou},
+  journal={arXiv preprint arXiv:2410.02052},
+  year={2024}
+}
+
+@article{koh2024tree,
+  title={Tree search for language model agents},
+  author={Koh, Jing Yu and McAleer, Stephen and Fried, Daniel and Salakhutdinov, Ruslan},
+  journal={arXiv preprint arXiv:2407.01476},
+  year={2024}
+}
+
+@article{zhou2023webarena,
+  title={Webarena: A realistic web environment for building autonomous agents},
+  author={Zhou, Shuyan and Xu, Frank F and Zhu, Hao and Zhou, Xuhui and Lo, Robert and Sridhar, Abishek and Cheng, Xianyi and Ou, Tianyue and Bisk, Yonatan and Fried, Daniel and others},
+  journal={arXiv preprint arXiv:2307.13854},
+  year={2023}
+}
+
+@misc{bai2024digirltraininginthewilddevicecontrol,
+      title={DigiRL: Training In-The-Wild Device-Control Agents with Autonomous Reinforcement Learning}, 
+      author={Hao Bai and Yifei Zhou and Mert Cemri and Jiayi Pan and Alane Suhr and Sergey Levine and Aviral Kumar},
+      year={2024},
+      eprint={2406.11896},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2406.11896}, 
+}
+
+@article{snell2024scaling,
+  title={Scaling llm test-time compute optimally can be more effective than scaling model parameters},
+  author={Snell, Charlie and Lee, Jaehoon and Xu, Kelvin and Kumar, Aviral},
+  journal={arXiv preprint arXiv:2408.03314},
+  year={2024}
+}
+
+@misc{welleck2024decodingmetagenerationinferencetimealgorithms,
+      title={From Decoding to Meta-Generation: Inference-time Algorithms for Large Language Models}, 
+      author={Sean Welleck and Amanda Bertsch and Matthew Finlayson and Hailey Schoelkopf and Alex Xie and Graham Neubig and Ilia Kulikov and Zaid Harchaoui},
+      year={2024},
+      eprint={2406.16838},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2406.16838}, 
+}
+
+@article{wei2022chain,
+  title={Chain-of-thought prompting elicits reasoning in large language models},
+  author={Wei, Jason and Wang, Xuezhi and Schuurmans, Dale and Bosma, Maarten and Xia, Fei and Chi, Ed and Le, Quoc V and Zhou, Denny and others},
+  journal={Advances in neural information processing systems},
+  volume={35},
+  pages={24824--24837},
+  year={2022}
+}
+
+@article{kojima2022large,
+  title={Large language models are zero-shot reasoners},
+  author={Kojima, Takeshi and Gu, Shixiang Shane and Reid, Machel and Matsuo, Yutaka and Iwasawa, Yusuke},
+  journal={Advances in neural information processing systems},
+  volume={35},
+  pages={22199--22213},
+  year={2022}
+}
+
+@article{zhang2023multimodal,
+  title={Multimodal chain-of-thought reasoning in language models},
+  author={Zhang, Zhuosheng and Zhang, Aston and Li, Mu and Zhao, Hai and Karypis, George and Smola, Alex},
+  journal={arXiv preprint arXiv:2302.00923},
+  year={2023}
+}
+
+@article{zawalski2024robotic,
+  title={Robotic control via embodied chain-of-thought reasoning},
+  author={Zawalski, Micha{\l} and Chen, William and Pertsch, Karl and Mees, Oier and Finn, Chelsea and Levine, Sergey},
+  journal={arXiv preprint arXiv:2407.08693},
+  year={2024}
+}
+
+@inproceedings{yao2023react,
+  title={React: Synergizing reasoning and acting in language models},
+  author={Yao, Shunyu and Zhao, Jeffrey and Yu, Dian and Du, Nan and Shafran, Izhak and Narasimhan, Karthik and Cao, Yuan},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2023}
+}
+
+@article{yao2023tree,
+  title={Tree of thoughts: Deliberate problem solving with large language models},
+  author={Yao, Shunyu and Yu, Dian and Zhao, Jeffrey and Shafran, Izhak and Griffiths, Tom and Cao, Yuan and Narasimhan, Karthik},
+  journal={Advances in neural information processing systems},
+  volume={36},
+  pages={11809--11822},
+  year={2023}
+}
+
+@misc{hao2023reasoninglanguagemodelplanning,
+      title={Reasoning with Language Model is Planning with World Model}, 
+      author={Shibo Hao and Yi Gu and Haodi Ma and Joshua Jiahua Hong and Zhen Wang and Daisy Zhe Wang and Zhiting Hu},
+      year={2023},
+      eprint={2305.14992},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2305.14992}, 
+}
+
+@article{wang2022self,
+  title={Self-consistency improves chain of thought reasoning in language models},
+  author={Wang, Xuezhi and Wei, Jason and Schuurmans, Dale and Le, Quoc and Chi, Ed and Narang, Sharan and Chowdhery, Aakanksha and Zhou, Denny},
+  journal={arXiv preprint arXiv:2203.11171},
+  year={2022}
+}
+
+@misc{shao2024deepseekmathpushinglimitsmathematical,
+      title={DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models}, 
+      author={Zhihong Shao and Peiyi Wang and Qihao Zhu and Runxin Xu and Junxiao Song and Xiao Bi and Haowei Zhang and Mingchuan Zhang and Y. K. Li and Y. Wu and Daya Guo},
+      year={2024},
+      eprint={2402.03300},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2402.03300}, 
+}
+
+@misc{lightman2023letsverifystepstep,
+      title={Let's Verify Step by Step}, 
+      author={Hunter Lightman and Vineet Kosaraju and Yura Burda and Harri Edwards and Bowen Baker and Teddy Lee and Jan Leike and John Schulman and Ilya Sutskever and Karl Cobbe},
+      year={2023},
+      eprint={2305.20050},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2305.20050}, 
+}
+
+@misc{deepseekai2025deepseekr1incentivizingreasoningcapability,
+      title={DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning}, 
+      author={{DeepSeek-AI}},
+      year={2025},
+      eprint={2501.12948},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2501.12948}, 
+}
+
+@misc{openai2024reasoning,
+  author       = {OpenAI},
+  title        = {Learning to reason with LLMs},
+  howpublished = {\url{https://openai.com/index/learning-to-reason-with-llms/}},
+  month        = sep,
+  year         = {2024},
+  note         = {Accessed: 2025-07-09}
+}
+
+@article{team2025kimi,
+  title={Kimi k1.5: Scaling reinforcement learning with llms},
+  author={{Kimi Team}},
+  journal={arXiv preprint arXiv:2501.12599},
+  year={2025}
+}
+
+@techreport{deepmind2025gemini2.5,
+  author       = {{Gemini Team}},
+  title        = {Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality, Long Context, and Next Generation Agentic Capabilities},
+  institution  = {Google DeepMind},
+  type         = {Technical Report},
+  number       = {–},
+  address      = {Mountain View, CA},
+  month        = jun,
+  year         = {2025},
+  day          = {17},
+  howpublished = {\url{https://storage.googleapis.com/deepmind-media/gemini/gemini_v2_5_report.pdf}},
+  note         = {Accessed 9 July 2025}
+}
