@@ -1,7 +1,7 @@
 import unittest
 
 from rw_eval.parsing.citations import extract_citation_mentions
-from rw_eval.parsing.references import parse_references
+from rw_eval.parsing.references import build_reference_lookup, parse_references
 from rw_eval.parsing.text import split_paragraphs, split_sentences
 
 
@@ -17,6 +17,16 @@ class ParsingTests(unittest.TestCase):
         mentions = extract_citation_mentions(split_sentences(paragraphs))
         self.assertEqual(mentions[0].citation_keys, ["1", "3", "4"])
 
+    def test_bracket_string_citation_key(self):
+        paragraphs = split_paragraphs("DPO variants are widely used [dpo].", "S")
+        mentions = extract_citation_mentions(split_sentences(paragraphs))
+        self.assertEqual(mentions[0].citation_keys, ["dpo"])
+
+    def test_bracket_string_citation_multiple_keys(self):
+        paragraphs = split_paragraphs("DPO variants are widely used [dpo, step_dpo].", "S")
+        mentions = extract_citation_mentions(split_sentences(paragraphs))
+        self.assertEqual(mentions[0].citation_keys, ["dpo", "step_dpo"])
+
     def test_bibtex_citation_single_key(self):
         paragraphs = split_paragraphs(r"Recent work uses retrieval \cite{yang2023hypothesis}.", "S")
         mentions = extract_citation_mentions(split_sentences(paragraphs))
@@ -31,6 +41,12 @@ class ParsingTests(unittest.TestCase):
         refs = parse_references("Rafailov, R. (2023). Direct Preference Optimization. NeurIPS.")
         self.assertEqual(refs[0].year, 2023)
         self.assertIn("Direct Preference Optimization", refs[0].title)
+
+    def test_bracket_string_reference_label(self):
+        refs = parse_references("[dpo] Rafailov, R. (2023). Direct Preference Optimization. NeurIPS.")
+        lookup = build_reference_lookup(refs)
+        self.assertEqual(refs[0].label, "dpo")
+        self.assertIs(lookup["dpo"], refs[0])
 
 
 if __name__ == "__main__":

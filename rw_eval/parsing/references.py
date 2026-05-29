@@ -12,7 +12,7 @@ from rw_eval.utils import normalize_text
 DOI_RE = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b", re.IGNORECASE)
 ARXIV_RE = re.compile(r"\barXiv[:\s]*([0-9]{4}\.[0-9]{4,5}(?:v\d+)?|[a-z-]+/[0-9]{7}(?:v\d+)?)", re.IGNORECASE)
 YEAR_RE = re.compile(r"\b(19\d{2}|20\d{2})\b")
-NUMERIC_LABEL_RE = re.compile(r"^\s*(?:\[(\d+)\]|(\d+)[.)])\s*")
+REFERENCE_LABEL_RE = re.compile(r"^\s*(?:\[([A-Za-z0-9_.:-]+)\]|(\d+)[.)])\s*")
 BIBTEX_ENTRY_RE = re.compile(r"@\w+\s*\{([^,]+),(.+?)\n\}", re.IGNORECASE | re.DOTALL)
 BIB_FIELD_RE = re.compile(r"(\w+)\s*=\s*[\{\"](.+?)[\}\"]\s*,?", re.DOTALL)
 
@@ -50,7 +50,7 @@ def _split_reference_lines(text: str) -> List[str]:
 
     refs: List[str] = []
     current: List[str] = []
-    starts_new = re.compile(r"^\s*(?:\[\d+\]|\d+[.)]\s+|[A-Z][A-Za-z'`-]+,\s)")
+    starts_new = re.compile(r"^\s*(?:\[[A-Za-z0-9_.:-]+\]|\d+[.)]\s+|[A-Z][A-Za-z'`-]+,\s)")
     for line in raw_lines:
         if starts_new.match(line) and current:
             refs.append(" ".join(current).strip())
@@ -92,7 +92,7 @@ def _parse_bibtex(text: str) -> List[ReferenceEntry]:
 def _parse_reference_line(line: str, index: int) -> ReferenceEntry:
     label: Optional[str] = None
     cleaned = line.strip()
-    label_match = NUMERIC_LABEL_RE.match(cleaned)
+    label_match = REFERENCE_LABEL_RE.match(cleaned)
     if label_match:
         label = label_match.group(1) or label_match.group(2)
         cleaned = cleaned[label_match.end() :].strip()

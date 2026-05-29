@@ -10,6 +10,7 @@ from rw_eval.schemas import CitationMention, Sentence
 
 
 NUMERIC_CITATION_RE = re.compile(r"\[(\d+(?:\s*[-,;]\s*\d+)*)\]")
+BRACKET_KEY_CITATION_RE = re.compile(r"\[([A-Za-z_][A-Za-z0-9_.:-]*(?:\s*[,;]\s*[A-Za-z_][A-Za-z0-9_.:-]*)*)\]")
 PAREN_AUTHOR_YEAR_RE = re.compile(r"\(([^()]{0,180}?\b(?:19\d{2}|20\d{2})[a-z]?[^()]*)\)")
 NARRATIVE_AUTHOR_YEAR_RE = re.compile(r"\b([A-Z][A-Za-z'`-]+)(?:\s+et\s+al\.)?\s*\((19\d{2}|20\d{2})[a-z]?\)")
 BIBTEX_CITATION_RE = re.compile(r"\\cite\w*\s*\{([^{}]+)\}")
@@ -49,6 +50,21 @@ def extract_citation_mentions(sentences: List[Sentence]) -> List[CitationMention
                 )
             )
             counter += 1
+        for match in BRACKET_KEY_CITATION_RE.finditer(sentence.text):
+            keys = _parse_bracket_keys(match.group(1))
+            if keys:
+                mentions.append(
+                    CitationMention(
+                        mention_id=f"C{counter}",
+                        paragraph_id=sentence.paragraph_id,
+                        sentence_id=sentence.sentence_id,
+                        raw_text=match.group(0),
+                        citation_keys=keys,
+                        start=match.start(),
+                        end=match.end(),
+                    )
+                )
+                counter += 1
         for match in PAREN_AUTHOR_YEAR_RE.finditer(sentence.text):
             keys = _parse_author_year_parenthetical(match.group(1))
             if keys:
@@ -141,3 +157,7 @@ def _parse_bibtex_keys(text: str) -> List[str]:
         if key and key not in keys:
             keys.append(key)
     return keys
+
+
+def _parse_bracket_keys(text: str) -> List[str]:
+    return _parse_bibtex_keys(text)
